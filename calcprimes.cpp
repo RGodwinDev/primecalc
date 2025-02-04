@@ -3,14 +3,67 @@
 #include <chrono>
 //#include <algorithm>
 //#include <execution>
+int sieve(int x);
+int squarerootprimes(int x);
 
 int main(){
 	uint32_t x;
-	std::cout << "how many primes? ";
-	std::cin >> x;
-	std::cout << "calculating " << x << " primes" << std::endl;
+	char y;
+	std::cout << "Use Sieve of Eratosthenes(E) or sqrt(S)?";
+	std::cin >> y;
+	std::chrono::steady_clock::time_point start;
+	int p;
+	if(y == 'E'){
+		std::cout << "pick a number: ";
+		std::cin >> x;
+		std::cout << "calculating all primes under " << x << " with Sieve of Eratosthenes" << std::endl;
+		start = std::chrono::steady_clock::now();
+		p = sieve(x);
+	}
+	else if( y == 'S'){
+		std::cout << "how many primes? ";
+		std::cin >> x;
+		std::cout << "calculating " << x << " primes via square root method" << std::endl;
+		start = std::chrono::steady_clock::now();
+		p = squarerootprimes(x);
+	}
+	else{
+		std::cout << "Just type in E or S next time :)";
+		return 0;
+	}
+
 	
-	const auto start{std::chrono::steady_clock::now()};
+	const auto end{std::chrono::steady_clock::now()};
+	const std::chrono::duration<double> elapsed_seconds{end - start};
+	std::cout << "The " << x << " prime is: " << p << std::endl;
+	std::cout << "Time: " << elapsed_seconds.count() << " seconds" << std::endl;
+
+	return 0;
+}
+
+
+//Sieve of Eratosthenes, shortened 50millionth from ~3 min to ~1 min
+int sieve(int x){
+	if(x < 2){return 0;}
+	std::vector<bool> A(x+1, true);
+	int root = sqrt(x);
+	for(int i = 2; i <= root; ++i){
+		if(A[i] == true){
+			for(int j = i*i; j <= x; j += i){
+				A[j] = false;
+			}
+		}
+	}
+
+	//get the last prime
+	int r = A.size()-1;
+	while(A[r] == false){
+		r--;
+	}
+	return r;
+}
+
+int squarerootprimes(int x){
 	std::vector<uint32_t> primes(x, 0);
 	
 	primes[0] = 2;
@@ -47,16 +100,11 @@ int main(){
 		
 		if(!broke){
 			primes[curplace++] = n;
-			if(curplace%1000000 == 0){
+			if(curplace%1000000 == 0){ //this if is just to see every millionth prime, not necessary
 				std::cout << curplace << " " << primes[curplace-1] << std::endl;
 			}
 		}
 		n+=2;
 	}
-	const auto end{std::chrono::steady_clock::now()};
-	const std::chrono::duration<double> elapsed_seconds{end - start};
-	std::cout << primes.size() << std::endl;
-	std::cout << "The " << x << " prime is: " << primes[x-1] << std::endl;
-	std::cout << "Time: " << elapsed_seconds.count() << " seconds" << std::endl;
-	return 0;
+	return primes[x-1];
 }
