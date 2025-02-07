@@ -3,8 +3,8 @@
 #include <chrono>
 //#include <algorithm>
 //#include <execution>
-int sieve(int x);
-int squarerootprimes(int x);
+uint32_t sieve(uint32_t x);
+uint32_t squarerootprimes(uint32_t x);
 
 int main(){
 	uint32_t x;
@@ -12,7 +12,7 @@ int main(){
 	std::cout << "Use Sieve of Eratosthenes(E) or sqrt(S)?";
 	std::cin >> y;
 	std::chrono::steady_clock::time_point start;
-	int p;
+	uint32_t p;
 	if(y == 'E'){
 		std::cout << "pick a number: ";
 		std::cin >> x;
@@ -43,27 +43,32 @@ int main(){
 
 
 //Sieve of Eratosthenes, shortened 50millionth from ~3 min to ~1 min
-int sieve(int x){
+uint32_t sieve(uint32_t x){
 	if(x < 2){return 0;}
 	std::vector<bool> A(x+1, true);
-	int root = sqrt(x);
-	for(int i = 2; i <= root; ++i){
+	uint32_t root = sqrt(x);
+	for(uint32_t i = 2; i <= root; ++i){
 		if(A[i] == true){
-			for(int j = i*i; j <= x; j += i){
+			for(uint32_t j = i*i; j <= x; j += i){
 				A[j] = false;
 			}
 		}
 	}
-
+	//count how many primes there are
+	uint32_t count = 0;
+	for(bool b : A){
+		count += b;
+	}
+	std::cout << count << " primes were calculated" << std::endl;
 	//get the last prime
-	int r = A.size()-1;
+	uint32_t r = A.size()-1;
 	while(A[r] == false){
 		r--;
 	}
 	return r;
 }
 
-int squarerootprimes(int x){
+uint32_t squarerootprimes(uint32_t x){
 	std::vector<uint32_t> primes(x, 0);
 	
 	primes[0] = 2;
